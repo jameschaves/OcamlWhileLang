@@ -38,7 +38,6 @@ type conditionExp = Condition of bExp * label
 
 type stmt = 
   | Assignment of string * aExp * label
-  | Skip of label
   | Seq of stmt * stmt
   | IfThenElse of conditionExp * stmt * stmt
   | While of conditionExp * stmt
@@ -50,6 +49,7 @@ type block =
 type expr = 
   | Block of block
   | Stmt of stmt
+  | Skip of expr
   | BExp of bExp * expr * expr
   | True
   | False

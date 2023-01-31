@@ -41,6 +41,8 @@ rule read_token =
     parse 
     | "true" { TRUE }
     | "false" { FALSE }  
+    | ":=" { ASSIGN }
+    | "skip" { SKIP }
     | "!" { NOT }
     | "==" { EQUAL }
     | "&&" { AND }
@@ -48,8 +50,6 @@ rule read_token =
     | ">" { GT}
     | "<" { LT }
     (* | identifier ":=*[" natural "]" { ASSIGN } *)
-    | ":=" { ASSIGN }
-    | "skip" { SKIP }
     | "*" { TIMES }
     | "+" { PLUS }
     | "-" { MINUS }

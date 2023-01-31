@@ -43,6 +43,7 @@ prog:
     ;
 
 expr:
+    | SKIP; l = expr { Skip(l) }
     | n = NUM { Num n }
     | a = VAR { Var a }
     | e1 = expr; TIMES; e2 = expr { AExp (Mult, e1, e2) }
@@ -57,7 +58,6 @@ expr:
     | FALSE { False } 
     | NOT; b = expr { Not (b) }
     | x = VAR; ASSIGN; e1 = AEXP; l = LABEL { Stmt(Assignment (x, e1, l)) }
-    | SKIP; l = LABEL { Stmt (Skip(l)) }
     | LPAREN; e = expr; RPAREN { e }
     | LBRACKET; e = expr; RBRACKET { e }
     | LCURLYBRACKET; e = expr; RCURLYBRACKET { e }
