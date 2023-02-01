@@ -42,9 +42,13 @@ rule read_token =
     | "true" { TRUE }
     | "false" { FALSE }  
     | ":=" { ASSIGN }
+    | "if" { IF }
+    | ";" { SEMICOLON }
+    | "else" { ELSE }
+    | "while" { WHILE }
     | "skip" { SKIP }
     | "!" { NOT }
-    | "==" { EQUAL }
+    | "=" { EQUAL }
     | "&&" { AND }
     | "||" { OR }
     | ">" { GT}
@@ -59,8 +63,7 @@ rule read_token =
     | "]" { RBRACKET }
     | "{" { LCURLYBRACKET }
     | "}" { RCURLYBRACKET }
-    | natural { NUM (int_of_string (Lexing.lexeme lexbuf)) }
-    | int { NUM (int_of_string (Lexing.lexeme lexbuf)) }
+    | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
     | identifier { VAR (Lexing.lexeme lexbuf)}
     | whitespace { read_token lexbuf }
     | "//" { read_single_line_comment lexbuf (* use our comment rule for rest of line *) }

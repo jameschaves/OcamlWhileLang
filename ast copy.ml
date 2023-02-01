@@ -20,63 +20,54 @@
   We implemented an additional algebraic type Block to generalize over 
   statements and conditions.  *)
 
-(* * An abstract type for identifiers
-module type ID = sig
-  type t
+type label = Int
 
-  val of_string : string -> t
-  val to_string : t -> string
-end
+type aExp = 
+  | Add  of aExp * aExp
+  | Sub of aExp * aExp
+  | Mult  of aExp * aExp
 
-module String_id = struct
-  type t = string
-
-  let of_string x = x
-  let to_string x = x
-end
-
-module Var_name : ID = String_id *)
-
-type identifier = Variable of string 
-
-type expr =
-  | Int of int
-  | Bool of bool
-  | Var of string  
-  | True
-  | False
-  | Not of unop
-  | Binop of binop * expr * expr
-  | Unop of unop * expr
-  | Assignment of identifier * expr * expr
-  | Skip of expr
-  (* | Seq of expr * expr *)
-  | IfThenElse of expr * block_expr * block_expr (* If ___ then ___ else ___ *)
-  | While of expr * block_expr (* While ___ do ___ *)
-
-and block_expr = 
-| Seq of expr list
-(* | Seq of expr * expr *)
-
-and binop = 
-  | Add
-  | Sub
-  | Mult
+type bExp = 
   | And
   | Or
   | Eq
-  | NotEq
   | Gt
-  | Lt  
+  | Lt
 
-and unop = 
-  | Not
-  | Neg
+type conditionExp = Condition of bExp * label
 
-type program = Prog of block_expr
+type stmt = 
+  | Assignment of string * aExp * label
+  | Skip of stmt
+  | Seq of stmt * stmt
+  | IfThenElse of conditionExp * stmt * stmt
+  | While of conditionExp * stmt
 
-(* 
+type block = 
+  | Stmt of stmt
+  | Condition of conditionExp
+
+type expr = 
+  | Block of block
+  | Stmt of stmt
+  | BExp of bExp * expr * expr
+  | True
+  | False
+  | Not of expr
+  | Var of string
+  | Num of int
+  | AExp of aExp * expr * expr
+  | Label of label
+
 let label(Stmt(Assignment(_, _, l))) = l
 let label(Stmt(Skip(l))) = l
-let label(Condition(b, l)) = l *)
+let label(Condition(Condition(b, l))) = l
 
+type program = Prog of stmt * aExp * expr
+
+
+
+
+
+
+  

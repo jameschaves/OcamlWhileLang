@@ -2,12 +2,15 @@
 open Ast
 %}
 
-%token <Ast.aExp> AEXP
-%token <Ast.label> LABEL
+/* Token definitions */
 
-%token <int> NUM
+%token <int> INT
 %token <string> VAR
 %token ASSIGN
+%token IF
+%token SEMICOLON
+%token ELSE
+%token WHILE
 %token SKIP
 %token PLUS
 %token MINUS
@@ -28,39 +31,95 @@ open Ast
 %token RCURLYBRACKET
 %token EOF
 
-%left PLUS
-%left MINUS
+/* 
+ Menhir allows you to specify how to resolve shift-reduce conflicts when it sees a .
+ There are three options:
+  %left  we reduce
+  %right we shift
+  %nonassoc raise a syntax error 
+ We list the operators in order of precedence - from low to high.
+ e.g. * has higher precedence than +  so 1 + 2 * 3  = 1 + (2 * 3)
+*/
+
+%right EQUAL
+%left PLUS MINUS
 %left TIMES
+%left AND OR  
+%right SEMICOLON
 
-%start  prog
+/* Specify starting production */
 
-%type <Ast.expr> prog
+%start <Ast.program> program
 
-%%
+//%start prog
+//%type <Ast.program> prog
 
-prog:
-    | e = expr; EOF { e }
-    ;
+/* Definition types */
+
+%type <block_expr> main_expr
+%type <block_expr> block_expr
+%type <expr> expr
+
+%type <unop> unop
+%type <binop> binop
+%% /* Start grammar productions */
+
+
+program: 
+| main= main_expr;  EOF { Prog (main) }
+
+/* Types */
+
+main_expr:
+| exprs = block_expr { exprs }
+
+block_expr:
+// | s1 = expr; SEMICOLON; exprs = separated_list(SEMICOLON, expr) {Seq (exprs)}  
+| exprs = separated_list(SEMICOLON, expr) {Seq (exprs)}  
+// | s1 = expr; SEMICOLON; s2 = expr { Seq (s1, s2) }  
+
+
+identifier:
+// | variable = VAR { Variable (Var_name.of_string variable) }
+| variable = VAR { Variable (variable) }
 
 expr:
-    | SKIP; l = expr { Skip(l) }
-    | n = NUM { Num n }
-    | a = VAR { Var a }
-    | e1 = expr; TIMES; e2 = expr { AExp (Mult, e1, e2) }
-    | e1 = expr; PLUS; e2 = expr { AExp (Add, e1, e2) }
-    | e1 = expr; MINUS; e2 = expr { AExp (Sub, e1, e2) }
-    | e1 = expr; AND; e2 = expr { BExp (And, e1, e2) }
-    | e1 = expr; OR; e2 = expr { BExp (Or, e1, e2) }
-    | e1 = expr; EQUAL; e2 = expr { BExp (Eq, e1, e2) }
-    | e1 = expr; GT; e2 = expr { BExp (Gt, e1, e2) }
-    | e1 = expr; LT; e2 = expr { BExp (Lt, e1, e2) }
-    | TRUE { True }
-    | FALSE { False } 
-    | NOT; b = expr { Not (b) }
-    | x = VAR; ASSIGN; e1 = AEXP; l = LABEL { Stmt(Assignment (x, e1, l)) }
-    | LPAREN; e = expr; RPAREN { e }
+    | LPAREN e = expr RPAREN { e }
     | LBRACKET; e = expr; RBRACKET { e }
-    | LCURLYBRACKET; e = expr; RCURLYBRACKET { e }
- 
-    // | x = expr; ASSIGN; e1 = expr; e2 = expr { Assignment(Str x, AExp e1, Label e2) }
-    ;
+    | i = INT { Int i }
+    | TRUE { Bool true }
+    | FALSE { Bool false }
+    | op = unop e = expr { Unop (op, e)}
+    | e1 = expr; op = binop; e2 = expr { Binop (op, e1, e2)}
+    | id = identifier; ASSIGN; assigned_expr = expr; label = expr { Assignment (id, assigned_expr, label)}
+    | SKIP; label = expr { Skip (label) }
+    // | s1 = expr; SEMICOLON; s2 = expr { Seq (s1, s2) }  
+    | IF; cond_expr = expr; then_expr = block_expr; ELSE; else_expr = block_expr { IfThenElse (cond_expr, then_expr, else_expr) }
+    | WHILE cond_expr = expr; loop_expr = block_expr { While ( cond_expr, loop_expr) }
+
+
+/* Operator expressions */
+
+/* %inline expands occurrences of these 
+    so rather than 
+    unop e 
+    we get two productions
+     EXCLAMATION_MARK e 
+     MINUS e 
+
+*/
+
+%inline unop:
+| NOT { Not }
+| MINUS { Neg }
+
+%inline binop:
+    | PLUS { Add }
+    | MINUS { Sub }
+    | TIMES { Mult }
+    | AND { And }
+    | OR { Or }
+    | EQUAL EQUAL { Eq }
+    | NOT EQUAL { NotEq }
+    | LT { Lt }
+    | GT { Gt }
