@@ -48,15 +48,22 @@ type expr =
   | Not of unop
   | Binop of binop * expr * expr
   | Unop of unop * expr
-  | Assignment of identifier * expr * expr
-  | Skip of expr
+  | Assignment of identifier * expr * label_expr
+  | Skip of label_expr
   (* | Seq of expr * expr *)
   | IfThenElse of expr * block_expr * block_expr (* If ___ then ___ else ___ *)
-  | While of expr * block_expr (* While ___ do ___ *)
+  | While of condition_expr * block_expr (* While ___ do ___ *)
 
 and block_expr = 
-| Seq of expr list
+| Stmt of expr list
+
 (* | Seq of expr * expr *)
+
+and condition_expr = 
+| Condition of expr * label_expr
+
+and label_expr = 
+| Label of expr
 
 and binop = 
   | Add

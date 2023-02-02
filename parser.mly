@@ -11,6 +11,7 @@ open Ast
 %token SEMICOLON
 %token ELSE
 %token WHILE
+%token DO
 %token SKIP
 %token PLUS
 %token MINUS
@@ -27,8 +28,6 @@ open Ast
 %token RPAREN
 %token LBRACKET
 %token RBRACKET
-%token LCURLYBRACKET
-%token RCURLYBRACKET
 %token EOF
 
 /* 
@@ -45,7 +44,6 @@ open Ast
 %left PLUS MINUS
 %left TIMES
 %left AND OR  
-%right SEMICOLON
 
 /* Specify starting production */
 
@@ -59,6 +57,9 @@ open Ast
 %type <block_expr> main_expr
 %type <block_expr> block_expr
 %type <expr> expr
+
+%type <condition_expr> condition_expr
+%type <label_expr> label_expr
 
 %type <unop> unop
 %type <binop> binop
@@ -75,27 +76,41 @@ main_expr:
 
 block_expr:
 // | s1 = expr; SEMICOLON; exprs = separated_list(SEMICOLON, expr) {Seq (exprs)}  
-| exprs = separated_list(SEMICOLON, expr) {Seq (exprs)}  
+// | LBRACKET; exprs = separated_list(SEMICOLON, expr); LBRACKET {Seq (exprs)}  
 // | s1 = expr; SEMICOLON; s2 = expr { Seq (s1, s2) }  
-
+    | stmtExprs = separated_list(SEMICOLON, stmt) {Stmt (stmtExprs)}  
 
 identifier:
 // | variable = VAR { Variable (Var_name.of_string variable) }
 | variable = VAR { Variable (variable) }
 
+condition_expr:
+    | LBRACKET; e = expr;  label = label_expr; RBRACKET { Condition (e, label)} 
+
+label_expr:
+    | LBRACKET; label = expr; RBRACKET { Label label }
+
+stmt:
+    // | LBRACKET; e = expr ; RBRACKET { e }
+    | LBRACKET; id = identifier; ASSIGN; assigned_expr = expr; label = label_expr; RBRACKET { Assignment (id, assigned_expr, label)}
+    | WHILE; cond_expr = condition_expr; DO LPAREN; loop_expr = block_expr; RPAREN { While ( cond_expr, loop_expr) }
+    | SKIP; label = label_expr { Skip (label) }
+    | IF; cond_expr = expr; then_expr = block_expr; ELSE; else_expr = block_expr { IfThenElse (cond_expr, then_expr, else_expr) }
+
 expr:
     | LPAREN e = expr RPAREN { e }
-    | LBRACKET; e = expr; RBRACKET { e }
+    // | LBRACKET; e = expr; RBRACKET { e }
     | i = INT { Int i }
+    | var = VAR { Var var }
     | TRUE { Bool true }
     | FALSE { Bool false }
     | op = unop e = expr { Unop (op, e)}
     | e1 = expr; op = binop; e2 = expr { Binop (op, e1, e2)}
-    | id = identifier; ASSIGN; assigned_expr = expr; label = expr { Assignment (id, assigned_expr, label)}
-    | SKIP; label = expr { Skip (label) }
+    // | id = identifier; ASSIGN; assigned_expr = expr; LBRACKET; label = expr; RBRACKET { Assignment (id, assigned_expr, label)}
+    // | SKIP; label = expr { Skip (label) }
     // | s1 = expr; SEMICOLON; s2 = expr { Seq (s1, s2) }  
-    | IF; cond_expr = expr; then_expr = block_expr; ELSE; else_expr = block_expr { IfThenElse (cond_expr, then_expr, else_expr) }
-    | WHILE cond_expr = expr; loop_expr = block_expr { While ( cond_expr, loop_expr) }
+    // | IF; cond_expr = expr; then_expr = block_expr; ELSE; else_expr = block_expr { IfThenElse (cond_expr, then_expr, else_expr) }
+    // | WHILE cond_expr = expr; loop_expr = block_expr { While ( cond_expr, loop_expr) }
 
 
 /* Operator expressions */
@@ -110,8 +125,8 @@ expr:
 */
 
 %inline unop:
-| NOT { Not }
-| MINUS { Neg }
+    | NOT { Not }
+    | MINUS { Neg }
 
 %inline binop:
     | PLUS { Add }

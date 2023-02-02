@@ -9,7 +9,6 @@ type token =
   | SKIP
   | SEMICOLON
   | RPAREN
-  | RCURLYBRACKET
   | RBRACKET
   | PLUS
   | OR
@@ -17,7 +16,6 @@ type token =
   | MINUS
   | LT
   | LPAREN
-  | LCURLYBRACKET
   | LBRACKET
   | INT of (int)
   | IF
@@ -26,6 +24,7 @@ type token =
   | EQUAL
   | EOF
   | ELSE
+  | DO
   | ASSIGN
   | AND
 

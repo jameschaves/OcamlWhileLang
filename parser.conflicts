@@ -1,0 +1,553 @@
+
+** Conflict (shift/reduce) in state 55.
+** Tokens involved: WHILE VAR TRUE TIMES SKIP PLUS OR NOT MINUS LT LPAREN LBRACKET INT IF GT FALSE EQUAL AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from program after reading:
+
+WHILE expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 55, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+WHILE expr block_expr 
+      expr . TIMES expr 
+
+** In state 55, looking ahead at TIMES, reducing production
+** loption(separated_nonempty_list(SEMICOLON,expr)) ->
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+WHILE expr block_expr // lookahead token is inherited
+           loption(separated_nonempty_list(SEMICOLON,expr)) // lookahead token is inherited
+           . 
+
+** Conflict (shift/reduce) in state 54.
+** Tokens involved: TIMES PLUS OR NOT MINUS LT GT EQUAL AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from program after reading:
+
+SKIP expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 54, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+SKIP expr 
+     expr . TIMES expr 
+
+** In state 54, looking ahead at TIMES, reducing production
+** expr -> SKIP expr
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+SKIP expr . 
+
+** Conflict (shift/reduce) in state 53.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+MINUS expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 53, looking ahead at NOT, reducing production
+** expr -> MINUS expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+MINUS expr . 
+
+** In state 53, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+MINUS expr 
+      expr . NOT EQUAL expr 
+
+** Conflict (shift/reduce) in state 47.
+** Tokens involved: WHILE VAR TRUE SKIP NOT MINUS LPAREN LBRACKET INT IF FALSE
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+IF expr block_expr ELSE
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 47, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+IF expr block_expr ELSE block_expr 
+                        loption(separated_nonempty_list(SEMICOLON,expr)) 
+                        separated_nonempty_list(SEMICOLON,expr) 
+                        expr 
+                        . NOT expr 
+
+** In state 47, looking ahead at NOT, reducing production
+** loption(separated_nonempty_list(SEMICOLON,expr)) ->
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+IF expr block_expr ELSE block_expr // lookahead token is inherited
+                        loption(separated_nonempty_list(SEMICOLON,expr)) // lookahead token is inherited
+                        . 
+
+** Conflict (shift/reduce) in state 43.
+** Tokens involved: TIMES SEMICOLON PLUS OR NOT MINUS LT GT EQUAL AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from program after reading:
+
+WHILE expr expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 43, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+WHILE expr block_expr 
+           loption(separated_nonempty_list(SEMICOLON,expr)) 
+           separated_nonempty_list(SEMICOLON,expr) 
+           expr 
+           expr . TIMES expr 
+
+** In state 43, looking ahead at TIMES, reducing production
+** separated_nonempty_list(SEMICOLON,expr) -> expr
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+WHILE expr block_expr // lookahead token is inherited
+           loption(separated_nonempty_list(SEMICOLON,expr)) // lookahead token is inherited
+           separated_nonempty_list(SEMICOLON,expr) // lookahead token is inherited
+           expr . 
+
+** Conflict (shift/reduce) in state 39.
+** Tokens involved: TIMES PLUS OR NOT MINUS LT GT EQUAL AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from program after reading:
+
+identifier ASSIGN expr expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 39, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+identifier ASSIGN expr expr 
+                       expr . TIMES expr 
+
+** In state 39, looking ahead at TIMES, reducing production
+** expr -> identifier ASSIGN expr expr
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+identifier ASSIGN expr expr . 
+
+** Conflict (shift/reduce/reduce) in state 38.
+** Tokens involved: WHILE VAR TRUE SKIP SEMICOLON RPAREN RBRACKET PLUS NOT MINUS LT LPAREN LBRACKET INT IF GT FALSE EQUAL EOF ELSE
+** The following explanations concentrate on token PLUS.
+** This state is reached from program after reading:
+
+WHILE expr MINUS expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 38, looking ahead at PLUS, reducing production
+** expr -> MINUS expr
+** is permitted because of the following sub-derivation:
+
+expr PLUS expr // lookahead token appears
+WHILE expr block_expr // lookahead token is inherited
+           loption(separated_nonempty_list(SEMICOLON,expr)) // lookahead token is inherited
+           separated_nonempty_list(SEMICOLON,expr) // lookahead token is inherited
+           expr // lookahead token is inherited
+           MINUS expr . 
+
+** In state 38, looking ahead at PLUS, shifting is permitted
+** because of the following sub-derivation:
+
+WHILE expr block_expr 
+      expr MINUS expr 
+                 expr . PLUS expr 
+
+** In state 38, looking ahead at PLUS, reducing production
+** expr -> expr MINUS expr
+** is permitted because of the following sub-derivation:
+
+expr PLUS expr // lookahead token appears
+WHILE expr block_expr // lookahead token is inherited because block_expr can vanish
+      expr MINUS expr . 
+
+** Conflict (shift/reduce) in state 36.
+** Tokens involved: TIMES PLUS OR NOT MINUS LT GT EQUAL AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from program after reading:
+
+NOT expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 36, looking ahead at TIMES, reducing production
+** expr -> NOT expr
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+NOT expr . 
+
+** In state 36, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+NOT expr 
+    expr . TIMES expr 
+
+** Conflict (shift/reduce) in state 34.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+expr AND expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 34, looking ahead at NOT, reducing production
+** expr -> expr AND expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+expr AND expr . 
+
+** In state 34, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+expr AND expr 
+         expr . NOT EQUAL expr 
+
+** Conflict (shift/reduce) in state 32.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+expr EQUAL EQUAL expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 32, looking ahead at NOT, reducing production
+** expr -> expr EQUAL EQUAL expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+expr EQUAL EQUAL expr . 
+
+** In state 32, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+expr EQUAL EQUAL expr 
+                 expr . NOT EQUAL expr 
+
+** Conflict (shift/reduce) in state 29.
+** Tokens involved: TIMES PLUS OR NOT MINUS LT GT EQUAL AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from program after reading:
+
+expr GT expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 29, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+expr GT expr 
+        expr . TIMES expr 
+
+** In state 29, looking ahead at TIMES, reducing production
+** expr -> expr GT expr
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+expr GT expr . 
+
+** Conflict (shift/reduce) in state 27.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+expr MINUS expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 27, looking ahead at NOT, reducing production
+** expr -> expr MINUS expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+expr MINUS expr . 
+
+** In state 27, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+expr MINUS expr 
+           expr . NOT EQUAL expr 
+
+** Conflict (shift/reduce) in state 25.
+** Tokens involved: TIMES PLUS OR NOT MINUS LT GT EQUAL AND
+** The following explanations concentrate on token TIMES.
+** This state is reached from program after reading:
+
+expr LT expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 25, looking ahead at TIMES, shifting is permitted
+** because of the following sub-derivation:
+
+expr LT expr 
+        expr . TIMES expr 
+
+** In state 25, looking ahead at TIMES, reducing production
+** expr -> expr LT expr
+** is permitted because of the following sub-derivation:
+
+expr TIMES expr // lookahead token appears
+expr LT expr . 
+
+** Conflict (shift/reduce) in state 23.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+expr PLUS expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 23, looking ahead at NOT, reducing production
+** expr -> expr PLUS expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+expr PLUS expr . 
+
+** In state 23, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+expr PLUS expr 
+          expr . NOT EQUAL expr 
+
+** Conflict (shift/reduce) in state 21.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+expr NOT EQUAL expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 21, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+expr NOT EQUAL expr 
+               expr . NOT EQUAL expr 
+
+** In state 21, looking ahead at NOT, reducing production
+** expr -> expr NOT EQUAL expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+expr NOT EQUAL expr . 
+
+** Conflict (shift/reduce) in state 18.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+expr OR expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 18, looking ahead at NOT, reducing production
+** expr -> expr OR expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+expr OR expr . 
+
+** In state 18, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+expr OR expr 
+        expr . NOT EQUAL expr 
+
+** Conflict (shift/reduce) in state 16.
+** Tokens involved: NOT LT GT
+** The following explanations concentrate on token NOT.
+** This state is reached from program after reading:
+
+expr TIMES expr
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+program 
+main_expr EOF 
+block_expr 
+loption(separated_nonempty_list(SEMICOLON,expr)) 
+separated_nonempty_list(SEMICOLON,expr) 
+expr 
+(?)
+
+** In state 16, looking ahead at NOT, reducing production
+** expr -> expr TIMES expr
+** is permitted because of the following sub-derivation:
+
+expr NOT EQUAL expr // lookahead token appears
+expr TIMES expr . 
+
+** In state 16, looking ahead at NOT, shifting is permitted
+** because of the following sub-derivation:
+
+expr TIMES expr 
+           expr . NOT EQUAL expr 

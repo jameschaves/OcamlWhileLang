@@ -46,6 +46,7 @@ rule read_token =
     | ";" { SEMICOLON }
     | "else" { ELSE }
     | "while" { WHILE }
+    | "do" { DO }
     | "skip" { SKIP }
     | "!" { NOT }
     | "=" { EQUAL }
@@ -61,8 +62,6 @@ rule read_token =
     | ")" { RPAREN }
     | "[" { LBRACKET }
     | "]" { RBRACKET }
-    | "{" { LCURLYBRACKET }
-    | "}" { RCURLYBRACKET }
     | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
     | identifier { VAR (Lexing.lexeme lexbuf)}
     | whitespace { read_token lexbuf }
