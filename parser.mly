@@ -1,5 +1,14 @@
 %{
 open Ast
+
+(*)
+   let next_id = ref 0;;
+   let id () = let res = !next_id in
+                 next_id := !next_id + 1;
+                 res;; 
+
+   let reset () = next_id := 0;;
+   *)
 %}
 
 /* Token definitions */
@@ -9,9 +18,8 @@ open Ast
 %token ASSIGN
 %token IF
 %token SEMICOLON
-%token ELSE
-%token WHILE
-%token DO
+%token ELSE THEN
+%token WHILE DO
 %token SKIP
 %token PLUS
 %token MINUS
@@ -47,71 +55,64 @@ open Ast
 
 /* Specify starting production */
 
-%start <Ast.program> program
-
-//%start prog
-//%type <Ast.program> prog
+%start <Ast.stmt> prog
 
 /* Definition types */
 
-%type <block_expr> main_expr
-%type <block_expr> block_expr
-%type <expr> expr
-
+%type <stmt> stmt
 %type <condition_expr> condition_expr
-%type <label_expr> label_expr
+%type <label> label
+%type <bExp> bExp
+%type <aExp> aExp
 
-%type <unop> unop
-%type <binop> binop
+%type <binOp> binOp
+%type <boolOp> boolOp
+%type <relOp> relOp
+
+
 %% /* Start grammar productions */
 
 
-program: 
-| main= main_expr;  EOF { Prog (main) }
+prog: 
+    | main= stmt;  EOF { main }
 
 /* Types */
 
-main_expr:
-| exprs = block_expr { exprs }
-
-block_expr:
-// | s1 = expr; SEMICOLON; exprs = separated_list(SEMICOLON, expr) {Seq (exprs)}  
-// | LBRACKET; exprs = separated_list(SEMICOLON, expr); LBRACKET {Seq (exprs)}  
-// | s1 = expr; SEMICOLON; s2 = expr { Seq (s1, s2) }  
-    | stmtExprs = separated_list(SEMICOLON, stmt) {Stmt (stmtExprs)}  
-
 identifier:
-// | variable = VAR { Variable (Var_name.of_string variable) }
-| variable = VAR { Variable (variable) }
+    | variable = VAR { Variable (variable) }
 
 condition_expr:
-    | LBRACKET; e = expr;  label = label_expr; RBRACKET { Condition (e, label)} 
+    | LBRACKET; e = bExp;  label = label; RBRACKET { Condition (e, label)} 
 
-label_expr:
-    | LBRACKET; label = expr; RBRACKET { Label label }
+label:
+    | LBRACKET; label = INT; RBRACKET { Label label }
 
 stmt:
-    // | LBRACKET; e = expr ; RBRACKET { e }
-    | LBRACKET; id = identifier; ASSIGN; assigned_expr = expr; label = label_expr; RBRACKET { Assignment (id, assigned_expr, label)}
-    | WHILE; cond_expr = condition_expr; DO LPAREN; loop_expr = block_expr; RPAREN { While ( cond_expr, loop_expr) }
-    | SKIP; label = label_expr { Skip (label) }
-    | IF; cond_expr = expr; then_expr = block_expr; ELSE; else_expr = block_expr { IfThenElse (cond_expr, then_expr, else_expr) }
+    | IF; cond_expr = condition_expr; THEN LPAREN; then_expr = stmt; RPAREN ELSE LPAREN; else_expr = stmt; RPAREN { IfThenElse (cond_expr, then_expr, else_expr) }
+    | WHILE; cond_expr = condition_expr; DO LPAREN; loop_expr = stmt; RPAREN { While ( cond_expr, loop_expr) }
+    | SKIP; label = label { Skip (label) }
+    | LBRACKET; id = identifier; ASSIGN; assigned_expr = aExp; label = label; RBRACKET { Assignment (id, assigned_expr, label)}
+    | LPAREN; s1 = stmt; SEMICOLON; s2 = stmt; RPAREN { Seq(s1, s2) }
 
-expr:
-    | LPAREN e = expr RPAREN { e }
-    // | LBRACKET; e = expr; RBRACKET { e }
+aExp_with_paren:
+    | LPAREN a = aExp RPAREN { a }
+
+aExp:
     | i = INT { Int i }
     | var = VAR { Var var }
-    | TRUE { Bool true }
-    | FALSE { Bool false }
-    | op = unop e = expr { Unop (op, e)}
-    | e1 = expr; op = binop; e2 = expr { Binop (op, e1, e2)}
-    // | id = identifier; ASSIGN; assigned_expr = expr; LBRACKET; label = expr; RBRACKET { Assignment (id, assigned_expr, label)}
-    // | SKIP; label = expr { Skip (label) }
-    // | s1 = expr; SEMICOLON; s2 = expr { Seq (s1, s2) }  
-    // | IF; cond_expr = expr; then_expr = block_expr; ELSE; else_expr = block_expr { IfThenElse (cond_expr, then_expr, else_expr) }
-    // | WHILE cond_expr = expr; loop_expr = block_expr { While ( cond_expr, loop_expr) }
+    | MINUS { Neg }
+    | a1 = aExp; op = binOp; a2 = aExp { Binop (op, a1, a2)}
 
+
+bExp_with_paren:
+    | LPAREN b = bExp RPAREN { b }
+
+bExp:
+    | TRUE { True }
+    | FALSE { False }
+    | NOT; b = bExp { Not (b) }
+    | a1 = aExp; op = relOp; a2 = aExp { RelOp (op, a1, a2)}
+    | b1 = bExp; op = boolOp; b2 = bExp { BoolOp (op, b1, b2)}
 
 /* Operator expressions */
 
@@ -124,16 +125,17 @@ expr:
 
 */
 
-%inline unop:
-    | NOT { Not }
-    | MINUS { Neg }
 
-%inline binop:
+%inline binOp:
     | PLUS { Add }
     | MINUS { Sub }
     | TIMES { Mult }
+
+%inline boolOp:
     | AND { And }
     | OR { Or }
+
+%inline relOp:
     | EQUAL EQUAL { Eq }
     | NOT EQUAL { NotEq }
     | LT { Lt }

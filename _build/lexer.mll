@@ -27,16 +27,6 @@ let newline = '\r' | '\n' | "\r\n"
 
 let natural = digit+
 
-(* let int_of_day d =
-  match d with
-  | Sun -> 1
-  | Mon -> 2
-  | Tue -> 3
-  | Wed -> 4
-  | Thu -> 5
-  | Fri -> 6
-  | Sat -> 7 *)
-
 rule read_token = 
     parse 
     | "true" { TRUE }
@@ -45,6 +35,7 @@ rule read_token =
     | "if" { IF }
     | ";" { SEMICOLON }
     | "else" { ELSE }
+    | "then" { THEN }
     | "while" { WHILE }
     | "do" { DO }
     | "skip" { SKIP }

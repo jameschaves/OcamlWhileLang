@@ -2,13 +2,10 @@ open OUnit2
 open Ast
 open Main
 
-
 let make_i n i s = 
-  (* n >:: (fun _ -> assert_equal (string_of_int i) (interp s)) *)
-  n >:: (fun _ -> assert_equal (string_of_int i) (parde s))
-
+  n >:: (fun _ -> assert_equal (string_of_int i) (interp s))
+ 
 let tests = [
-  make_i "skip" 
   (* make_i "int" 22 "22"; 
   make_i "add" 22 "11+11";
   make_i "mult" 22 "2*11";

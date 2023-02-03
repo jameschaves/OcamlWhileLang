@@ -20,70 +20,44 @@
   We implemented an additional algebraic type Block to generalize over 
   statements and conditions.  *)
 
-(* * An abstract type for identifiers
-module type ID = sig
-  type t
-
-  val of_string : string -> t
-  val to_string : t -> string
-end
-
-module String_id = struct
-  type t = string
-
-  let of_string x = x
-  let to_string x = x
-end
-
-module Var_name : ID = String_id *)
-
 type identifier = Variable of string 
 
-type expr =
-  | Int of int
-  | Bool of bool
-  | Var of string  
-  | True
-  | False
-  | Not of unop
-  | Binop of binop * expr * expr
-  | Unop of unop * expr
-  | Assignment of identifier * expr * label_expr
-  | Skip of label_expr
-  (* | Seq of expr * expr *)
-  | IfThenElse of expr * block_expr * block_expr (* If ___ then ___ else ___ *)
-  | While of condition_expr * block_expr (* While ___ do ___ *)
+type label = Label of int
 
-and block_expr = 
-| Stmt of expr list
-
-(* | Seq of expr * expr *)
-
-and condition_expr = 
-| Condition of expr * label_expr
-
-and label_expr = 
-| Label of expr
-
-and binop = 
+type binOp = 
   | Add
   | Sub
   | Mult
+
+type boolOp = 
   | And
   | Or
+
+type relOp = 
   | Eq
   | NotEq
   | Gt
   | Lt  
 
-and unop = 
-  | Not
+type aExp =
+  | Var of string  
+  | Int of int
   | Neg
+  | Binop of binOp * aExp * aExp
 
-type program = Prog of block_expr
+type bExp = 
+  | True
+  | False
+  | Not of bExp
+  | RelOp of relOp * aExp * aExp
+  | BoolOp of boolOp * bExp * bExp
 
-(* 
-let label(Stmt(Assignment(_, _, l))) = l
-let label(Stmt(Skip(l))) = l
-let label(Condition(b, l)) = l *)
+type stmt =
+  | Seq of stmt * stmt
+  | IfThenElse of condition_expr * stmt * stmt (* If ___ then ___ else ___ *)
+  | While of condition_expr * stmt (* While ___ do ___ *)
+  | Assignment of identifier * aExp * label
+  | Skip of label
 
+and condition_expr = 
+  | Condition of bExp * label
