@@ -2,14 +2,14 @@ open Data_flow;;
 open Ast;;
 open Utils;;
 
-module IdentSet = Set.Make(struct type t = identifier let compare = compare end);;
+module IdentSet = Set.Make(struct type t = ident let compare = compare end);;
 module LabelSet = Set.Make(struct type t = EBSet.key let compare = compare end);;
 
 let free_variables_aexpr expr =
   let rec fv_aexpr expr s =
   match expr with
   | Int _ -> s
-  | Var x -> IdentSet.add x s
+  | Ident x -> IdentSet.add x s
   | BinOp (_, a1, a2) -> let lh = fv_aexpr a1 s in fv_aexpr a2 lh
   in fv_aexpr expr IdentSet.empty;;
 
@@ -28,10 +28,10 @@ let free_variables_bexpr expr =
 
 let genc c =
   match c with
-  | Right condition_expr -> free_variables_condition_expr condition_expr
+  | Right bexpr -> free_variables_bexpr bexpr
   | Left stmt ->
     (match stmt with
-     | Assignment (_, aexpr, _) -> free_variables_condition_expr condition_expr
+     | Assignment (_, aexpr, _) -> free_variables_aexpr aexpr
      | _ -> IdentSet.empty
     );;
 
