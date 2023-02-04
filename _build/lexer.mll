@@ -21,7 +21,7 @@ let digit = ['0'-'9']
 let alpha = ['a'-'z' 'A'-'Z']
 
 let int = '-'? digit+  (* regex for integers *)
-let identifier = (alpha) (alpha|digit|'_')* (* regex for identifier *)
+let ident = (alpha) (alpha|digit|'_')* (* regex for identifier *)
 let whitespace = [' ' '\t']+
 let newline = '\r' | '\n' | "\r\n"
 
@@ -54,7 +54,7 @@ rule read_token =
     | "[" { LBRACKET }
     | "]" { RBRACKET }
     | int { INT (int_of_string (Lexing.lexeme lexbuf)) }
-    | identifier { VAR (Lexing.lexeme lexbuf)}
+    | ident { IDENT (Lexing.lexeme lexbuf)}
     | whitespace { read_token lexbuf }
     | "//" { read_single_line_comment lexbuf (* use our comment rule for rest of line *) }
     | "/*" { read_multi_line_comment lexbuf }    

@@ -825,7 +825,7 @@ and __ocaml_lex_read_token_rec lexbuf __ocaml_lex_state =
 
   | 24 ->
 # 57 "lexer.mll"
-                 ( VAR (Lexing.lexeme lexbuf))
+            ( IDENT (Lexing.lexeme lexbuf))
 # 830 "lexer.ml"
 
   | 25 ->

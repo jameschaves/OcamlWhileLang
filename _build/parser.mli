@@ -3,7 +3,6 @@
 
 type token = 
   | WHILE
-  | VAR of (string)
   | TRUE
   | TIMES
   | THEN
@@ -20,6 +19,7 @@ type token =
   | LBRACKET
   | INT of (int)
   | IF
+  | IDENT of (string)
   | GT
   | FALSE
   | EQUAL

@@ -2,5 +2,6 @@
 #load "lexer.cmo";;
 #load "parser.cmo";;
 #load "main.cmo";;
+#load "data_flow.cmo";;
 open Ast;;
 open Main;;

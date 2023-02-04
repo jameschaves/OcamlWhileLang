@@ -14,7 +14,7 @@ open Ast
 /* Token definitions */
 
 %token <int> INT
-%token <string> VAR
+%token <string> IDENT
 %token ASSIGN
 %token IF
 %token SEMICOLON
@@ -60,7 +60,6 @@ open Ast
 /* Definition types */
 
 %type <stmt> stmt
-%type <condition_expr> condition_expr
 %type <label> label
 %type <bExp> bExp
 %type <aExp> aExp
@@ -78,20 +77,17 @@ prog:
 
 /* Types */
 
-identifier:
-    | variable = VAR { Variable (variable) }
-
 condition_expr:
-    | LBRACKET; e = bExp;  label = label; RBRACKET { Condition (e, label)} 
+    | LBRACKET; b = bExp;  label = label; RBRACKET { Condition (e, label)} 
 
 label:
     | LBRACKET; label = INT; RBRACKET { Label label }
 
 stmt:
-    | IF; cond_expr = condition_expr; THEN LPAREN; then_expr = stmt; RPAREN ELSE LPAREN; else_expr = stmt; RPAREN { IfThenElse (cond_expr, then_expr, else_expr) }
-    | WHILE; cond_expr = condition_expr; DO LPAREN; loop_expr = stmt; RPAREN { While ( cond_expr, loop_expr) }
+    | IF LBRACKET; b = bExp;  label = label; RBRACKET THEN LPAREN; then_expr = stmt; RPAREN ELSE LPAREN; else_expr = stmt; RPAREN { IfThenElse (b, then_expr, else_expr, label) }
+    | WHILE LBRACKET; b = bExp;  label = label; RBRACKET DO LPAREN; loop_expr = stmt; RPAREN { While (b, loop_expr, label) }
     | SKIP; label = label { Skip (label) }
-    | LBRACKET; id = identifier; ASSIGN; assigned_expr = aExp; label = label; RBRACKET { Assignment (id, assigned_expr, label)}
+    | LBRACKET; id = IDENT; ASSIGN; assigned_expr = aExp; label = label; RBRACKET { Assignment (id, assigned_expr, label)}
     | LPAREN; s1 = stmt; SEMICOLON; s2 = stmt; RPAREN { Seq(s1, s2) }
 
 aExp_with_paren:
@@ -99,17 +95,17 @@ aExp_with_paren:
 
 aExp:
     | i = INT { Int i }
-    | var = VAR { Var var }
+    | id = IDENT { Ident id }
     | MINUS { Neg }
-    | a1 = aExp; op = binOp; a2 = aExp { Binop (op, a1, a2)}
+    | a1 = aExp; op = binOp; a2 = aExp { BinOp (op, a1, a2)}
 
 
 bExp_with_paren:
     | LPAREN b = bExp RPAREN { b }
 
 bExp:
-    | TRUE { True }
-    | FALSE { False }
+    | TRUE { Bool (true) }
+    | FALSE { Bool (false) }
     | NOT; b = bExp { Not (b) }
     | a1 = aExp; op = relOp; a2 = aExp { RelOp (op, a1, a2)}
     | b1 = bExp; op = boolOp; b2 = bExp { BoolOp (op, b1, b2)}

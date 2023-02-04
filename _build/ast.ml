@@ -20,7 +20,7 @@
   We implemented an additional algebraic type Block to generalize over 
   statements and conditions.  *)
 
-type identifier = Variable of string 
+type ident = string;;
 
 type label = Label of int
 
@@ -40,24 +40,21 @@ type relOp =
   | Lt  
 
 type aExp =
-  | Var of string  
+  | Ident of ident  
   | Int of int
   | Neg
-  | Binop of binOp * aExp * aExp
+  | BinOp of binOp * aExp * aExp
 
 type bExp = 
-  | True
-  | False
+  | Bool of bool
   | Not of bExp
   | RelOp of relOp * aExp * aExp
   | BoolOp of boolOp * bExp * bExp
 
 type stmt =
   | Seq of stmt * stmt
-  | IfThenElse of condition_expr * stmt * stmt (* If ___ then ___ else ___ *)
-  | While of condition_expr * stmt (* While ___ do ___ *)
-  | Assignment of identifier * aExp * label
+  | IfThenElse of bExp * stmt * stmt * label (* If ___ then ___ else ___ [label]*)
+  | While of bExp * stmt * label (* While ___ do ___ [label]*)
+  | Assignment of ident * aExp * label
   | Skip of label
 
-and condition_expr = 
-  | Condition of bExp * label

@@ -1,14 +1,14 @@
 ### Starting build.
 # Target: main.ml.depends, tags: { package(oUnit), extension:ml, file:main.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
-ocamlfind ocamldep -package oUnit -modules main.ml > main.ml.depends
+ocamlfind ocamldep -package oUnit -modules main.ml > main.ml.depends # cached
 # Target: ast.ml.depends, tags: { package(oUnit), extension:ml, file:ast.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
 ocamlfind ocamldep -package oUnit -modules ast.ml > ast.ml.depends # cached
 # Target: ast.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:ast.cmo, file:ast.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o ast.cmo ast.ml # cached
 # Target: lexer.mll, tags: { package(oUnit), extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet, traverse, use_menhir }
-/home/jameschaves/.opam/cs3110-2023sp/bin/ocamllex.opt -q lexer.mll # cached
+/home/jameschaves/.opam/cs3110-2023sp/bin/ocamllex.opt -q lexer.mll
 # Target: lexer.ml.depends, tags: { package(oUnit), extension:ml, file:lexer.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
-ocamlfind ocamldep -package oUnit -modules lexer.ml > lexer.ml.depends # cached
+ocamlfind ocamldep -package oUnit -modules lexer.ml > lexer.ml.depends
 # Target: parser.mly.depends, tags: { package(oUnit), extension:mly, file:parser.mly, infer, menhir_ocamldep, ocaml, ocamldep, quiet, traverse, use_menhir }
 menhir --raw-depend --ocamldep 'ocamlfind ocamldep -modules' parser.mly > parser.mly.depends # cached
 # Target: parser.mly, tags: { package(oUnit), byte, compile, extension:ml, extension:mly, file:parser.ml, file:parser.mly, infer, menhir, ocaml, parser, quiet, traverse, use_menhir }
@@ -18,38 +18,14 @@ ocamlfind ocamldep -package oUnit -modules parser.mli > parser.mli.depends # cac
 # Target: parser.cmi, tags: { package(oUnit), byte, compile, extension:mli, file:parser.mli, interf, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o parser.cmi parser.mli # cached
 # Target: lexer.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet, traverse, use_menhir }
-ocamlfind ocamlc -c -package oUnit -o lexer.cmo lexer.ml # cached
+ocamlfind ocamlc -c -package oUnit -o lexer.cmo lexer.ml
 # Target: main.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o main.cmo main.ml
 + ocamlfind ocamlc -c -package oUnit -o main.cmo main.ml
-File "main.ml", lines 14-15, characters 2-43:
-14 | ..match e with
+File "main.ml", line 15, characters 4-24:
 15 |   | IfThenElse (_, _, _) -> failwith "TODO"
-Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-(Seq (_, _)|While (Condition (_, Label _), _)|
-Assignment (Variable _, _, Label _)|Skip (Label _))
-File "main.ml", lines 19-20, characters 30-19:
-19 | ..............................function 
-20 |     | Var _ -> true
-Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-(Neg|Int _|Binop (_, _, _))
-File "main.ml", lines 26-32, characters 26-53:
-26 | ..........................function 
-27 |   | Int _ -> failwith "Does not step"
-28 |   | Var _ -> failwith "Does not step"
-29 | | Binop (binop, e1, e2) when is_value e1 && is_value e2 ->
-30 |   step_binop binop e1 e2
-31 | | Binop (binop, e1, e2) when is_value e1 -> Binop (binop, e1, step e2)
-32 | | Binop (binop, e1, e2) -> Binop (binop, step e1, e2)
-Warning 8 [partial-match]: this pattern-matching is not exhaustive.
-Here is an example of a case that is not matched:
-Neg
-File "main.ml", line 53, characters 2-12:
-53 |   s |> parse |> eval |> string_of_val
-       ^^^^^^^^^^
-Error: This expression has type Ast.stmt
-       but an expression was expected of type Ast.aExp
+         ^^^^^^^^^^^^^^^^^^^^
+Error: The constructor IfThenElse expects 4 argument(s),
+       but is applied here to 3 argument(s)
 Command exited with code 2.
 # Compilation unsuccessful.
