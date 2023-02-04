@@ -24,6 +24,7 @@ type token =
   | FALSE
   | EQUAL
   | EOF
+  | END
   | ELSE
   | DO
   | ASSIGN

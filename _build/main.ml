@@ -7,7 +7,7 @@ let parse (s : string) : stmt =
   ast
 
 
- 
+(*  
 (** [string_of_val e] converts [e] to a string.
     Requires: [e] is a value. *)
 let string_of_val (e : stmt) : string = 
@@ -79,4 +79,4 @@ let rec eval (e : 'a) : 'a =
 (* * [interpret s] interpret [s] by lexing and parsing it,
     evaluating it, and converting the result to a string. *)
 let interp (s : string) : string =
-  s |> parse |> eval |> string_of_val
+  s |> parse |> eval |> string_of_val *)

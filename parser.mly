@@ -1,7 +1,7 @@
 %{
 open Ast
 
-(*)
+(**
    let next_id = ref 0;;
    let id () = let res = !next_id in
                  next_id := !next_id + 1;
@@ -18,7 +18,7 @@ open Ast
 %token ASSIGN
 %token IF
 %token SEMICOLON
-%token ELSE THEN
+%token ELSE THEN END
 %token WHILE DO
 %token SKIP
 %token PLUS
@@ -52,6 +52,7 @@ open Ast
 %left PLUS MINUS
 %left TIMES
 %left AND OR  
+%right SEMICOLON
 
 /* Specify starting production */
 
@@ -73,25 +74,31 @@ open Ast
 
 
 prog: 
-    | main= stmt;  EOF { main }
+    | main= stmt; option(SEMICOLON);  EOF { main }
 
 /* Types */
 
-condition_expr:
-    | LBRACKET; b = bExp;  label = label; RBRACKET { Condition (e, label)} 
 
 label:
-    | LBRACKET; label = INT; RBRACKET { Label label }
+    | LBRACKET; label = INT; RBRACKET; { Label label }
 
 stmt:
-    | IF LBRACKET; b = bExp;  label = label; RBRACKET THEN LPAREN; then_expr = stmt; RPAREN ELSE LPAREN; else_expr = stmt; RPAREN { IfThenElse (b, then_expr, else_expr, label) }
-    | WHILE LBRACKET; b = bExp;  label = label; RBRACKET DO LPAREN; loop_expr = stmt; RPAREN { While (b, loop_expr, label) }
-    | SKIP; label = label { Skip (label) }
-    | LBRACKET; id = IDENT; ASSIGN; assigned_expr = aExp; label = label; RBRACKET { Assignment (id, assigned_expr, label)}
-    | LPAREN; s1 = stmt; SEMICOLON; s2 = stmt; RPAREN { Seq(s1, s2) }
+    | if_stmt = ifStmt; s = stmt { Seq (if_stmt, s) } 
+    | WHILE LBRACKET; b = bExp; RBRACKET; label = label; DO; loop_expr = stmt; END { While (b, loop_expr, label) }
+    | while_stmt = whileStmt; stmt = stmt { Seq (while_stmt, stmt) }
+    | while_stmt = whileStmt { while_stmt }
+    | if_stmt = ifStmt { if_stmt }
+    | SKIP; label = label; { Skip (label) }
+    | LBRACKET; id = IDENT; ASSIGN; assigned_expr = aExp; RBRACKET; label = label { Assignment (id, assigned_expr, label)}
+    | s1 = stmt; SEMICOLON; s2 = stmt { Seq(s1, s2) }
 
-aExp_with_paren:
-    | LPAREN a = aExp RPAREN { a }
+ifStmt:
+    | IF LBRACKET; b = bExp; RBRACKET; label = label; THEN ; then_expr = stmt; ELSE; else_expr = stmt { IfThenElse (b, then_expr, else_expr, label) }
+
+
+whileStmt:
+   | WHILE LBRACKET; b = bExp; RBRACKET; label = label; DO; loop_expr = stmt { While (b, loop_expr, label) }
+
 
 aExp:
     | i = INT { Int i }

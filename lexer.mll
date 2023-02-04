@@ -34,8 +34,9 @@ rule read_token =
     | ":=" { ASSIGN }
     | "if" { IF }
     | ";" { SEMICOLON }
-    | "else" { ELSE }
     | "then" { THEN }
+    | "else" { ELSE }
+    | "end" { END }
     | "while" { WHILE }
     | "do" { DO }
     | "skip" { SKIP }
