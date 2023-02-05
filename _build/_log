@@ -1,6 +1,6 @@
 ### Starting build.
-# Target: cfg.ml.depends, tags: { package(oUnit), extension:ml, file:cfg.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
-ocamlfind ocamldep -package oUnit -modules cfg.ml > cfg.ml.depends # cached
+# Target: lv_analysis.ml.depends, tags: { package(oUnit), extension:ml, file:lv_analysis.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
+ocamlfind ocamldep -package oUnit -modules lv_analysis.ml > lv_analysis.ml.depends
 # Target: data_flow.ml.depends, tags: { package(oUnit), extension:ml, file:data_flow.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
 ocamlfind ocamldep -package oUnit -modules data_flow.ml > data_flow.ml.depends # cached
 # Target: ast.ml.depends, tags: { package(oUnit), extension:ml, file:ast.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
@@ -23,16 +23,20 @@ ocamlfind ocamldep -package oUnit -modules parser.mli > parser.mli.depends # cac
 ocamlfind ocamlc -c -package oUnit -o parser.cmi parser.mli # cached
 # Target: lexer.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o lexer.cmo lexer.ml # cached
+# Target: lv_code.ml.depends, tags: { package(oUnit), extension:ml, file:lv_code.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
+ocamlfind ocamldep -package oUnit -modules lv_code.ml > lv_code.ml.depends # cached
 # Target: utils.ml.depends, tags: { package(oUnit), extension:ml, file:utils.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
 ocamlfind ocamldep -package oUnit -modules utils.ml > utils.ml.depends # cached
 # Target: utils.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:utils.cmo, file:utils.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o utils.cmo utils.ml # cached
-# Target: cfg.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:cfg.cmo, file:cfg.ml, implem, ocaml, quiet, traverse, use_menhir }
-ocamlfind ocamlc -c -package oUnit -o cfg.cmo cfg.ml # cached
+# Target: lv_code.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:lv_code.cmo, file:lv_code.ml, implem, ocaml, quiet, traverse, use_menhir }
+ocamlfind ocamlc -c -package oUnit -o lv_code.cmo lv_code.ml # cached
+# Target: lv_analysis.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:lv_analysis.cmo, file:lv_analysis.ml, implem, ocaml, quiet, traverse, use_menhir }
+ocamlfind ocamlc -c -package oUnit -o lv_analysis.cmo lv_analysis.ml
 # Target: parser.ml.depends, tags: { package(oUnit), extension:ml, file:parser.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
 ocamlfind ocamldep -package oUnit -modules parser.ml > parser.ml.depends # cached
 # Target: parser.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:parser.cmo, file:parser.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o parser.cmo parser.ml # cached
-# Target: cfg.byte, tags: { package(oUnit), byte, dont_link_with, extension:byte, file:cfg.byte, link, ocaml, program, quiet, traverse, use_menhir }
-ocamlfind ocamlc -linkpkg -package oUnit ast.cmo data_flow.cmo parser.cmo lexer.cmo utils.cmo cfg.cmo -o cfg.byte
+# Target: lv_analysis.byte, tags: { package(oUnit), byte, dont_link_with, extension:byte, file:lv_analysis.byte, link, ocaml, program, quiet, traverse, use_menhir }
+ocamlfind ocamlc -linkpkg -package oUnit ast.cmo data_flow.cmo parser.cmo lexer.cmo utils.cmo lv_code.cmo lv_analysis.cmo -o lv_analysis.byte
 # Compilation successful.

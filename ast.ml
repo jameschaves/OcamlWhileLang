@@ -53,8 +53,11 @@ type bExp =
 
 type stmt =
   | Seq of stmt * stmt
-  | IfThenElse of bExp * stmt * stmt * label (* If ___ then ___ else ___ [label]*)
-  | While of bExp * stmt * label (* While ___ do ___ [label]*)
+  | IfThenElse of condition_expr * stmt * stmt (* If ___ then ___ else ___ *)
+  | While of condition_expr * stmt (* While ___ do ___ *)
   | Assignment of ident * aExp * label
   | Skip of label
+
+  and condition_expr = 
+  | Condition of bExp * label
 

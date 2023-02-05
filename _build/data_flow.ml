@@ -10,7 +10,7 @@ module EBSet = Map.Make(struct type t = int let compare = compare end);;
 
 (* Data Flow Node. *)
 type data_flow_graph = {
-  content : (stmt, bExp) either;
+  content : (stmt, condition_expr) either;
   children: EBSet.key list;
 };;
 
@@ -28,9 +28,10 @@ let rec build_df ast ebs links next_cur =
   | Seq (s1, s2) ->
     let (s1ebs, s1links, s1ncur) = build_df s1 ebs links next_cur in
     build_df s2 s1ebs s1links s1ncur 
-  | While (b, ws, _) ->      
+    
+  | While (c, ws) ->      
       let ebsm = link_df ebs links next_cur in
-      let bool_node = { content = Right b; children = [] } in
+      let bool_node = { content = Right c; children = [] } in
       let ebsmb = EBSet.add next_cur bool_node ebsm in 
       let (ebsfb, wlinks, wncur) = build_df ws ebsmb [next_cur] (next_cur + 1) in
         if wncur > (next_cur + 1) then
@@ -41,8 +42,8 @@ let rec build_df ast ebs links next_cur =
           (tied_knot_ebsfb, [next_cur], wncur)
         else
           (ebsfb, [next_cur], next_cur + 1)
-  | IfThenElse (b, ts, fs, _) ->
-      let new_node = { content = Right b; children = [] } in
+  | IfThenElse (c, ts, fs) ->
+      let new_node = { content = Right c; children = [] } in
       let ebsb = EBSet.add next_cur new_node ebs in
       let ebsmb = link_df ebsb links next_cur in
       let (tsebsmb, tslinks, tscur) = 

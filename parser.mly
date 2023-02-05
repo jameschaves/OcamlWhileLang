@@ -18,8 +18,7 @@ open Ast
 %token ASSIGN
 %token IF
 %token SEMICOLON
-%token ELSE THEN END
-%token WHILE DO
+%token ELSE THEN END WHILE DO
 %token SKIP
 %token PLUS
 %token MINUS
@@ -61,6 +60,7 @@ open Ast
 /* Definition types */
 
 %type <stmt> stmt
+%type <condition_expr> condition_expr
 %type <label> label
 %type <bExp> bExp
 %type <aExp> aExp
@@ -78,27 +78,18 @@ prog:
 
 /* Types */
 
+condition_expr:
+    | LBRACKET; b = bExp; RBRACKET; label = label { Condition (b, label)} 
 
 label:
     | LBRACKET; label = INT; RBRACKET; { Label label }
 
 stmt:
-    | if_stmt = ifStmt; s = stmt { Seq (if_stmt, s) } 
-    | WHILE LBRACKET; b = bExp; RBRACKET; label = label; DO; loop_expr = stmt; END { While (b, loop_expr, label) }
-    | while_stmt = whileStmt; stmt = stmt { Seq (while_stmt, stmt) }
-    | while_stmt = whileStmt { while_stmt }
-    | if_stmt = ifStmt { if_stmt }
+    | IF; cond_expr = condition_expr; THEN; then_expr = stmt; ELSE ; else_expr = stmt; END { IfThenElse (cond_expr, then_expr, else_expr) }
+    | WHILE; cond_expr = condition_expr; DO; loop_expr = stmt; END { While ( cond_expr, loop_expr) }
     | SKIP; label = label; { Skip (label) }
     | LBRACKET; id = IDENT; ASSIGN; assigned_expr = aExp; RBRACKET; label = label { Assignment (id, assigned_expr, label)}
     | s1 = stmt; SEMICOLON; s2 = stmt { Seq(s1, s2) }
-
-ifStmt:
-    | IF LBRACKET; b = bExp; RBRACKET; label = label; THEN ; then_expr = stmt; ELSE; else_expr = stmt { IfThenElse (b, then_expr, else_expr, label) }
-
-
-whileStmt:
-   | WHILE LBRACKET; b = bExp; RBRACKET; label = label; DO; loop_expr = stmt { While (b, loop_expr, label) }
-
 
 aExp:
     | i = INT { Int i }
