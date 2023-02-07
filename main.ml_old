@@ -1,0 +1,72 @@
+open Ast
+
+type ('a, 'b, 'c) among = Left of 'a | Midle of 'b | Right of 'c
+
+(** [parse s] parses [s] into an AST. *)
+let parse (s : string) : stmt = 
+  let lexbuf = Lexing.from_string s in
+  let ast = Parser.prog Lexer.read_token lexbuf in 
+  ast
+
+(** [string_of_val e] converts [e] to a string. Requires: [e] is a value. *)
+let string_of_val (e : stmt) : string = 
+  match e with
+  | IfThenElse (_, _, _) -> failwith "TODO"
+  (* | Stmt(Unop _) -> failwith "14 precondition violated" *)
+
+(* [is_value e] is whether [e] is a value *)
+let is_value : stmt  -> stmt = function 
+  | Midle Int _ -> true;
+  | Midle Ident _ -> false;
+  | Midle (Neg | BinOp (_, _, _)) -> false;
+  | Right (Bool _ | Not _) -> true;
+  | Right (RelOp (_, _, _) | BoolOp (_, _, _)) -> false;
+
+(** [step e] takes a single step of evaluation of [e]. *)
+let rec step : (stmt, aExp, bExp) among -> (stmt, aExp, bExp) among = function 
+  | Midle (Int _ | Ident _) -> failwith "Does not step"
+  | Midle BinOp (binOp, a1, a2) when is_value a1 && is_value a2 ->
+  step_binOp binOp a1 a2
+  | Midle BinOp (binOp, a1, a2) when is_value a1 -> BinOp (binOp, a1, step a2)
+  | Midle BinOp (binOp, a1, a2) -> BinOp (binOp, step a1, a2)
+
+  | Right (Bool _ | Not _) -> failwith "Does not step"
+  | Right RelOp (relOp, a1, a2) when is_value a1 && is_value a2 ->
+    step_relOp relOp a1 a2
+  | Right RelOp (relOp, a1, a2) when is_value a1 -> RelOp (relOp, a1, stepAExp a2)
+  | Right RelOp (relOp, a1, a2) -> RelOp (relOp, step a1, a2)
+
+  | Right BoolOp (boolOp, b1, b2) when is_valueBExp b1 && is_valueBExp b2 ->
+    step_boolOp boolOp b1 b2
+  | Right BoolOp (boolOp, b1, b2) when is_valueBExp b1 -> BoolOp (boolOp, b1, step b2)
+  | Right BoolOp (boolOp, b1, b2) -> BoolOp (boolOp, step b1, b2)
+
+(* [step_bop bop v1 v2] implements the primite operation 
+   [v1 bop v2]. Requires: [v1] and [v2] are both values *)
+and step_binOp binOp v1 v2 = match binOp, v1, v2 with
+  | Add, Int a, Int b -> Int (a + b)
+  | Sub, Int a, Int b -> Int (a - b)
+  | Mult, Int a, Int b -> Int (a * b)
+  | _ -> failwith "Operator and operand binOp type mismatch"
+    
+and step_relOp relOp v1 v2 = match relOp, v1, v2 with
+  | Eq, Int a1, Int a2 -> (a1 == a2)
+  | NotEq, Int a1, Int a2 -> (a1 != a2)
+  | Gt, Int a1, Int a2 -> (a1 > a2)
+  | Lt, Int a1, Int a2 -> (a1 < a2)
+  | _ -> failwith "Operator and operand relOp type mismatch"
+
+and step_boolOp boolOp v1 v2 = match boolOp, v1, v2 with
+  | And, Bool b1, Bool b2 -> (b1 && b2)
+  | Or, Bool b1, Bool b2 -> (b1 || b2)
+  | _ -> failwith "Operator and operand boolOp type mismatch"
+
+(** [eval e] fully evaluates [e] to a value [v].*)
+let rec eval (e : stmt) : stmt = 
+  if is_value e then e else 
+    e |> step |> eval
+    
+(* * [interpret s] interpret [s] by lexing and parsing it,
+    evaluating it, and converting the result to a string. *)
+let interp (s : string) : string =
+  s |> parse |> eval |> string_of_val

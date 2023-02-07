@@ -1,14 +1,10 @@
 ### Starting build.
-# Target: lv_analysis.ml.depends, tags: { package(oUnit), extension:ml, file:lv_analysis.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
-ocamlfind ocamldep -package oUnit -modules lv_analysis.ml > lv_analysis.ml.depends
-# Target: data_flow.ml.depends, tags: { package(oUnit), extension:ml, file:data_flow.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
-ocamlfind ocamldep -package oUnit -modules data_flow.ml > data_flow.ml.depends # cached
+# Target: main.ml.depends, tags: { package(oUnit), extension:ml, file:main.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
+ocamlfind ocamldep -package oUnit -modules main.ml > main.ml.depends
 # Target: ast.ml.depends, tags: { package(oUnit), extension:ml, file:ast.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
 ocamlfind ocamldep -package oUnit -modules ast.ml > ast.ml.depends # cached
 # Target: ast.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:ast.cmo, file:ast.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o ast.cmo ast.ml # cached
-# Target: data_flow.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:data_flow.cmo, file:data_flow.ml, implem, ocaml, quiet, traverse, use_menhir }
-ocamlfind ocamlc -c -package oUnit -o data_flow.cmo data_flow.ml # cached
 # Target: lexer.mll, tags: { package(oUnit), extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet, traverse, use_menhir }
 /home/jameschaves/.opam/cs3110-2023sp/bin/ocamllex.opt -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { package(oUnit), extension:ml, file:lexer.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
@@ -23,20 +19,46 @@ ocamlfind ocamldep -package oUnit -modules parser.mli > parser.mli.depends # cac
 ocamlfind ocamlc -c -package oUnit -o parser.cmi parser.mli # cached
 # Target: lexer.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o lexer.cmo lexer.ml # cached
-# Target: lv_code.ml.depends, tags: { package(oUnit), extension:ml, file:lv_code.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
-ocamlfind ocamldep -package oUnit -modules lv_code.ml > lv_code.ml.depends # cached
-# Target: utils.ml.depends, tags: { package(oUnit), extension:ml, file:utils.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
-ocamlfind ocamldep -package oUnit -modules utils.ml > utils.ml.depends # cached
-# Target: utils.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:utils.cmo, file:utils.ml, implem, ocaml, quiet, traverse, use_menhir }
-ocamlfind ocamlc -c -package oUnit -o utils.cmo utils.ml # cached
-# Target: lv_code.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:lv_code.cmo, file:lv_code.ml, implem, ocaml, quiet, traverse, use_menhir }
-ocamlfind ocamlc -c -package oUnit -o lv_code.cmo lv_code.ml # cached
-# Target: lv_analysis.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:lv_analysis.cmo, file:lv_analysis.ml, implem, ocaml, quiet, traverse, use_menhir }
-ocamlfind ocamlc -c -package oUnit -o lv_analysis.cmo lv_analysis.ml
+# Target: main.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet, traverse, use_menhir }
+ocamlfind ocamlc -c -package oUnit -o main.cmo main.ml
++ ocamlfind ocamlc -c -package oUnit -o main.cmo main.ml
+File "main.ml", lines 13-14, characters 2-43:
+13 | ..match e with
+14 |   | IfThenElse (_, _, _) -> failwith "TODO"
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(Neg|Ident _|Int _|BinOp (_, _, _)|Bool _|Not _|RelOp (_, _, _)|
+BoolOp (_, _, _)|Seq (_, _)|While (_, _)|Assignment (_, _, Label _)|
+Skip (Label _)|Condition (_, Label _))
+File "main.ml", lines 18-23, characters 30-49:
+18 | ..............................function
+19 |   | Int _ -> true
+20 |   | Ident _ -> false
+21 |   | (Neg | BinOp (_, _, _)) -> false
+22 |   | (Bool _ | Not _) -> true;
+23 |   | (RelOp (_, _, _) | BoolOp (_, _, _)) -> false
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(Seq (_, _)|IfThenElse (_, _, _)|While (_, _)|Assignment (_, _, _)|Skip _|
+Condition (_, _))
+File "main.ml", lines 26-48, characters 30-41:
+26 | ..............................function 
+27 |   | (Int _ | Ident _ | Bool _ | Not _ | Neg) -> failwith "Does not step"
+28 |   | BinOp (binOp, a1, a2) when is_value a1 && is_value a2 ->
+29 |   step_binOp binOp a1 a2
+30 |   | BinOp (binOp, a1, a2) when is_value a1 -> BinOp (binOp, a1, step a2)
+...
+45 |     let cStep = step c and
+46 |         s1Step = step s1 and
+47 |         s2Step = step s2 in
+48 |         IfThenElse(cStep, s1Step, s2Step)
+Warning 8 [partial-match]: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(While (_, _)|Assignment (_, _, _)|Skip _|Condition (_, _))
 # Target: parser.ml.depends, tags: { package(oUnit), extension:ml, file:parser.ml, ocaml, ocamldep, quiet, traverse, use_menhir }
 ocamlfind ocamldep -package oUnit -modules parser.ml > parser.ml.depends # cached
 # Target: parser.cmo, tags: { package(oUnit), byte, compile, extension:cmo, extension:ml, file:parser.cmo, file:parser.ml, implem, ocaml, quiet, traverse, use_menhir }
 ocamlfind ocamlc -c -package oUnit -o parser.cmo parser.ml # cached
-# Target: lv_analysis.byte, tags: { package(oUnit), byte, dont_link_with, extension:byte, file:lv_analysis.byte, link, ocaml, program, quiet, traverse, use_menhir }
-ocamlfind ocamlc -linkpkg -package oUnit ast.cmo data_flow.cmo parser.cmo lexer.cmo utils.cmo lv_code.cmo lv_analysis.cmo -o lv_analysis.byte
+# Target: main.byte, tags: { package(oUnit), byte, dont_link_with, extension:byte, file:main.byte, link, ocaml, program, quiet, traverse, use_menhir }
+ocamlfind ocamlc -linkpkg -package oUnit ast.cmo parser.cmo lexer.cmo main.cmo -o main.byte
 # Compilation successful.

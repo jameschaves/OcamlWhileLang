@@ -12,6 +12,7 @@ let free_variables_aexpr expr =
   | Ident x -> IdentSet.add x s
   | BinOp (_, a1, a2) -> let lh = fv_aexpr a1 s in fv_aexpr a2 lh
   | Neg -> IdentSet.empty
+  | _ -> IdentSet.empty
   in fv_aexpr expr IdentSet.empty;;
 
 let free_variables_bexpr expr =
@@ -25,6 +26,7 @@ let free_variables_bexpr expr =
         IdentSet.union lh rh
     | BoolOp (_, b1, b2) ->
         let lh = compute b1 s in compute b2 lh
+    | _ -> IdentSet.empty
   in compute expr IdentSet.empty;;
 
 let genc c =
@@ -33,6 +35,7 @@ let genc c =
   | Right condition_expr -> 
     (match condition_expr with
      | Condition (bexpr, _) -> free_variables_bexpr bexpr
+     | _ -> IdentSet.empty
     )
   | Left stmt ->
     (match stmt with

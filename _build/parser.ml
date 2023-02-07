@@ -181,16 +181,16 @@ type ('s, 'r) _menhir_state =
 
 
 and ('s, 'r) _menhir_cell1_aExp = 
-  | MenhirCell1_aExp of 's * ('s, 'r) _menhir_state * (Ast.aExp)
+  | MenhirCell1_aExp of 's * ('s, 'r) _menhir_state * (Ast.expr)
 
 and ('s, 'r) _menhir_cell1_bExp = 
-  | MenhirCell1_bExp of 's * ('s, 'r) _menhir_state * (Ast.bExp)
+  | MenhirCell1_bExp of 's * ('s, 'r) _menhir_state * (Ast.expr)
 
 and ('s, 'r) _menhir_cell1_condition_expr = 
-  | MenhirCell1_condition_expr of 's * ('s, 'r) _menhir_state * (Ast.condition_expr)
+  | MenhirCell1_condition_expr of 's * ('s, 'r) _menhir_state * (Ast.expr)
 
 and ('s, 'r) _menhir_cell1_stmt = 
-  | MenhirCell1_stmt of 's * ('s, 'r) _menhir_state * (Ast.stmt)
+  | MenhirCell1_stmt of 's * ('s, 'r) _menhir_state * (Ast.expr)
 
 and 's _menhir_cell0_IDENT = 
   | MenhirCell0_IDENT of 's * (
@@ -215,185 +215,185 @@ and ('s, 'r) _menhir_cell1_WHILE =
   | MenhirCell1_WHILE of 's * ('s, 'r) _menhir_state
 
 and _menhir_box_prog = 
-  | MenhirBox_prog of (Ast.stmt) [@@unboxed]
+  | MenhirBox_prog of (Ast.expr) [@@unboxed]
 
 let _menhir_action_01 =
   fun i ->
     (
-# 95 "parser.mly"
+# 87 "parser.mly"
               ( Int i )
 # 226 "parser.ml"
-     : (Ast.aExp))
+     : (Ast.expr))
 
 let _menhir_action_02 =
   fun id ->
     (
-# 96 "parser.mly"
+# 88 "parser.mly"
                  ( Ident id )
 # 234 "parser.ml"
-     : (Ast.aExp))
+     : (Ast.expr))
 
 let _menhir_action_03 =
   fun () ->
     (
-# 97 "parser.mly"
+# 89 "parser.mly"
             ( Neg )
 # 242 "parser.ml"
-     : (Ast.aExp))
+     : (Ast.expr))
 
 let _menhir_action_04 =
   fun a1 a2 ->
     let op = 
-# 124 "parser.mly"
+# 113 "parser.mly"
            ( Add )
 # 250 "parser.ml"
      in
     (
-# 98 "parser.mly"
+# 90 "parser.mly"
                                        ( BinOp (op, a1, a2))
 # 255 "parser.ml"
-     : (Ast.aExp))
+     : (Ast.expr))
 
 let _menhir_action_05 =
   fun a1 a2 ->
     let op = 
-# 125 "parser.mly"
+# 114 "parser.mly"
             ( Sub )
 # 263 "parser.ml"
      in
     (
-# 98 "parser.mly"
+# 90 "parser.mly"
                                        ( BinOp (op, a1, a2))
 # 268 "parser.ml"
-     : (Ast.aExp))
+     : (Ast.expr))
 
 let _menhir_action_06 =
   fun a1 a2 ->
     let op = 
-# 126 "parser.mly"
+# 115 "parser.mly"
             ( Mult )
 # 276 "parser.ml"
      in
     (
-# 98 "parser.mly"
+# 90 "parser.mly"
                                        ( BinOp (op, a1, a2))
 # 281 "parser.ml"
-     : (Ast.aExp))
+     : (Ast.expr))
 
 let _menhir_action_07 =
   fun () ->
     (
-# 105 "parser.mly"
+# 94 "parser.mly"
            ( Bool (true) )
 # 289 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_08 =
   fun () ->
     (
-# 106 "parser.mly"
+# 95 "parser.mly"
             ( Bool (false) )
 # 297 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_09 =
   fun b ->
     (
-# 107 "parser.mly"
+# 96 "parser.mly"
                     ( Not (b) )
 # 305 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_10 =
   fun a1 a2 ->
     let op = 
-# 133 "parser.mly"
+# 122 "parser.mly"
                   ( Eq )
 # 313 "parser.ml"
      in
     (
-# 108 "parser.mly"
+# 97 "parser.mly"
                                        ( RelOp (op, a1, a2))
 # 318 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_11 =
   fun a1 a2 ->
     let op = 
-# 134 "parser.mly"
+# 123 "parser.mly"
                 ( NotEq )
 # 326 "parser.ml"
      in
     (
-# 108 "parser.mly"
+# 97 "parser.mly"
                                        ( RelOp (op, a1, a2))
 # 331 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_12 =
   fun a1 a2 ->
     let op = 
-# 135 "parser.mly"
+# 124 "parser.mly"
          ( Lt )
 # 339 "parser.ml"
      in
     (
-# 108 "parser.mly"
+# 97 "parser.mly"
                                        ( RelOp (op, a1, a2))
 # 344 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_13 =
   fun a1 a2 ->
     let op = 
-# 136 "parser.mly"
+# 125 "parser.mly"
          ( Gt )
 # 352 "parser.ml"
      in
     (
-# 108 "parser.mly"
+# 97 "parser.mly"
                                        ( RelOp (op, a1, a2))
 # 357 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_14 =
   fun b1 b2 ->
     let op = 
-# 129 "parser.mly"
+# 118 "parser.mly"
           ( And )
 # 365 "parser.ml"
      in
     (
-# 109 "parser.mly"
+# 98 "parser.mly"
                                         ( BoolOp (op, b1, b2))
 # 370 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_15 =
   fun b1 b2 ->
     let op = 
-# 130 "parser.mly"
+# 119 "parser.mly"
          ( Or )
 # 378 "parser.ml"
      in
     (
-# 109 "parser.mly"
+# 98 "parser.mly"
                                         ( BoolOp (op, b1, b2))
 # 383 "parser.ml"
-     : (Ast.bExp))
+     : (Ast.expr))
 
 let _menhir_action_16 =
   fun b label ->
     (
-# 82 "parser.mly"
+# 74 "parser.mly"
                                                   ( Condition (b, label))
 # 391 "parser.ml"
-     : (Ast.condition_expr))
+     : (Ast.expr))
 
 let _menhir_action_17 =
   fun label ->
     (
-# 85 "parser.mly"
+# 77 "parser.mly"
                                        ( Label label )
 # 399 "parser.ml"
      : (Ast.label))
@@ -417,50 +417,50 @@ let _menhir_action_19 =
 let _menhir_action_20 =
   fun main ->
     (
-# 77 "parser.mly"
+# 69 "parser.mly"
                                           ( main )
 # 423 "parser.ml"
-     : (Ast.stmt))
+     : (Ast.expr))
 
 let _menhir_action_21 =
   fun cond_expr else_expr then_expr ->
     (
-# 88 "parser.mly"
+# 80 "parser.mly"
                                                                                            ( IfThenElse (cond_expr, then_expr, else_expr) )
 # 431 "parser.ml"
-     : (Ast.stmt))
+     : (Ast.expr))
 
 let _menhir_action_22 =
   fun cond_expr loop_expr ->
     (
-# 89 "parser.mly"
+# 81 "parser.mly"
                                                                    ( While ( cond_expr, loop_expr) )
 # 439 "parser.ml"
-     : (Ast.stmt))
+     : (Ast.expr))
 
 let _menhir_action_23 =
   fun label ->
     (
-# 90 "parser.mly"
+# 82 "parser.mly"
                            ( Skip (label) )
 # 447 "parser.ml"
-     : (Ast.stmt))
+     : (Ast.expr))
 
 let _menhir_action_24 =
   fun assigned_expr id label ->
     (
-# 91 "parser.mly"
+# 83 "parser.mly"
                                                                                   ( Assignment (id, assigned_expr, label))
 # 455 "parser.ml"
-     : (Ast.stmt))
+     : (Ast.expr))
 
 let _menhir_action_25 =
   fun s1 s2 ->
     (
-# 92 "parser.mly"
+# 84 "parser.mly"
                                       ( Seq(s1, s2) )
 # 463 "parser.ml"
-     : (Ast.stmt))
+     : (Ast.expr))
 
 let _menhir_print_token : token -> string =
   fun _tok ->

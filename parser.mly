@@ -47,7 +47,7 @@ open Ast
  e.g. * has higher precedence than +  so 1 + 2 * 3  = 1 + (2 * 3)
 */
 
-%right EQUAL
+
 %left PLUS MINUS
 %left TIMES
 %left AND OR  
@@ -55,20 +55,12 @@ open Ast
 
 /* Specify starting production */
 
-%start <Ast.stmt> prog
+%start <Ast.expr> prog
 
 /* Definition types */
 
-%type <stmt> stmt
-%type <condition_expr> condition_expr
+
 %type <label> label
-%type <bExp> bExp
-%type <aExp> aExp
-
-%type <binOp> binOp
-%type <boolOp> boolOp
-%type <relOp> relOp
-
 
 %% /* Start grammar productions */
 
@@ -97,9 +89,6 @@ aExp:
     | MINUS { Neg }
     | a1 = aExp; op = binOp; a2 = aExp { BinOp (op, a1, a2)}
 
-
-bExp_with_paren:
-    | LPAREN b = bExp RPAREN { b }
 
 bExp:
     | TRUE { Bool (true) }

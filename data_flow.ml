@@ -10,7 +10,7 @@ module EBSet = Map.Make(struct type t = int let compare = compare end);;
 
 (* Data Flow Node. *)
 type data_flow_graph = {
-  content : (stmt, condition_expr) either;
+  content : (expr, expr) either;
   children: EBSet.key list;
 };;
 
