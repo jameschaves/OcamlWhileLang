@@ -1,5 +1,8 @@
 open Ast
 
+module AssignMap = Map.Make(String);;
+let assign = AssignMap.empty;;
+
 type ('a, 'b) either = Left of 'a | Right of 'b;;
 
 (** [parse s] parses [s] into an AST. *)
@@ -11,44 +14,64 @@ let parse (s : string) : expr =
 (** [string_of_val e] converts [e] to a string. Requires: [e] is a value. *)
 let string_of_val (e : expr) : string = 
   match e with
-  | IfThenElse (_, _, _) -> failwith "TODO"
-  (* | Stmt(Unop _) -> failwith "14 precondition violated" *)
+  | Int i -> string_of_int i
+  (* | Ident x -> string_of_int (AssignMap.find x assign) *)
+  | Ident i -> i
+  | Bool b ->string_of_bool b
+  | (Neg | BinOp (_, _, _) | Bool _ | Not _
+  | RelOp (_, _, _) | BoolOp (_, _, _) | Seq (_, _) | While (_, _) 
+  | Assignment (_, _, Label _)| Skip (Label _) | Condition (_, Label _) 
+  | IfThenElse (_, _, _)) -> failwith "14 precondition violated"
 
 (* [is_value e] is whether [e] is a value *)
-let is_value : expr -> bool = function
+let rec is_value : expr -> bool = function
   | Int _ -> true
-  | Ident _ -> false
+  | Ident _ -> true
+  | Assignment (_, _, _) -> false
   | (Neg | BinOp (_, _, _)) -> false
   | (Bool _ | Not _) -> true;
   | (RelOp (_, _, _) | BoolOp (_, _, _)) -> false
+  | (Seq (_, _)|IfThenElse (_, _, _)|While (_, _)|Skip _| Condition (_, _)) -> false
   
 (** [step e] takes a single step of evaluation of [e]. *)
 let rec step : expr -> expr = function 
   | (Int _ | Ident _ | Bool _ | Not _ | Neg) -> failwith "Does not step"
+
   | BinOp (binOp, a1, a2) when is_value a1 && is_value a2 ->
   step_binOp binOp a1 a2
   | BinOp (binOp, a1, a2) when is_value a1 -> BinOp (binOp, a1, step a2)
   | BinOp (binOp, a1, a2) -> BinOp (binOp, step a1, a2)
+  
   | RelOp (relOp, a1, a2) when is_value a1 && is_value a2 ->
   step_relOp relOp a1 a2
   | RelOp (relOp, a1, a2) when is_value a1 -> RelOp (relOp, a1, step a2)
   | RelOp (relOp, a1, a2) -> RelOp (relOp, step a1, a2)
+  
   | BoolOp (boolOp, b1, b2) when is_value b1 && is_value b2 ->
   step_boolOp boolOp b1 b2
   | BoolOp (boolOp, b1, b2) when is_value b1 -> BoolOp (boolOp, b1, step b2)
   | BoolOp (boolOp, b1, b2) -> BoolOp (boolOp, step b1, b2)
-  | Seq (s1, s2) ->
-    let s1Step = step s1 and
-        s2Step = step s2 in
-    Seq (s1Step, s2Step)
-  | IfThenElse (c, s1, s2) ->
-    let cStep = step c and
-        s1Step = step s1 and
-        s2Step = step s2 in
-        IfThenElse(cStep, s1Step, s2Step)
-  (*| While (_, _)
-  | Assignment (_, _, _)
-  | Skip _|Condition (_, _) *)
+
+  | Seq (s1, s2) when not(is_value s1) && not(is_value s2) -> Seq (step s1, step s2)
+  | Seq (s1, s2) when not(is_value s1) -> Seq (step s1, s2)
+  | Seq (s1, s2) when not(is_value s2) -> Seq (s1, step s2)
+
+  | IfThenElse (c, s1, s2) when not(is_value s1) && not(is_value s2) -> IfThenElse (step c, step s1, step s2)
+  | IfThenElse (c, s1, s2) when not(is_value s1) -> IfThenElse (step c, step s1, s2)
+  | IfThenElse (c, s1, s2) when not(is_value s2) -> IfThenElse (step c, s1, step s2)
+
+  | IfThenElse (c, s1, s2) when not(is_value s1) && not(is_value s2) -> IfThenElse (step c, step s1, step s2)
+
+  | While (c, w) when not(is_value w) -> While (step c, step w)
+  
+  | Assignment (x, a, _) when not(is_value a) -> step a
+  | Assignment (x, a, _) -> let assign = AssignMap.add x a assign in Ident x
+
+  | Skip _ -> failwith "TODO"
+  | Condition (c, l) -> 
+    let cStep = step c in
+          Condition (cStep, l)
+
  
 (* [step_bop bop v1 v2] implements the primite operation 
    [v1 bop v2]. Requires: [v1] and [v2] are both values *)

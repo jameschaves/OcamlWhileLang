@@ -67,6 +67,8 @@ open Ast
 
 prog: 
     | main= stmt; option(SEMICOLON);  EOF { main }
+    | opAExp = aExpWithCompl; EOF { opAExp } 
+    | opBExp = bExpWithCompl; EOF { opBExp } 
 
 /* Types */
 
@@ -83,12 +85,17 @@ stmt:
     | LBRACKET; id = IDENT; ASSIGN; assigned_expr = aExp; RBRACKET; label = label { Assignment (id, assigned_expr, label)}
     | s1 = stmt; SEMICOLON; s2 = stmt { Seq(s1, s2) }
 
+aExpWithCompl:
+    | option(LBRACKET); option(LPAREN); a = aExp; option(RPAREN); option(RBRACKET) { a }
+
 aExp:
     | i = INT { Int i }
     | id = IDENT { Ident id }
     | MINUS { Neg }
     | a1 = aExp; op = binOp; a2 = aExp { BinOp (op, a1, a2)}
 
+bExpWithCompl:
+    | option(LBRACKET); option(LPAREN); b = bExp; option(RPAREN); option(RBRACKET) { b }
 
 bExp:
     | TRUE { Bool (true) }
