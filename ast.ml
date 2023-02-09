@@ -40,6 +40,7 @@ type relOp =
   | Lt  
 
 type expr =
+  | Print of int
   | Ident of ident  
   | Int of int
   | Neg

@@ -15,13 +15,20 @@ let parse (s : string) : expr =
 let string_of_val (e : expr) : string = 
   match e with
   | Int i -> string_of_int i
-  (* | Ident x -> string_of_int (AssignMap.find x assign) *)
   | Ident i -> i
   | Bool b ->string_of_bool b
   | (Neg | BinOp (_, _, _) | Bool _ | Not _
   | RelOp (_, _, _) | BoolOp (_, _, _) | Seq (_, _) | While (_, _) 
   | Assignment (_, _, Label _)| Skip (Label _) | Condition (_, Label _) 
   | IfThenElse (_, _, _)) -> failwith "14 precondition violated"
+
+let output (e : expr) : string = 
+    match e with
+  | Print i -> string_of_int i
+  | _ -> failwith "erro"
+(* 
+  let process (ident : string) (a : int)  = function
+    let assign = AssignMap.add x a assign *)
 
 (* [is_value e] is whether [e] is a value *)
 let rec is_value : expr -> bool = function

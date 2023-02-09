@@ -10,6 +10,9 @@ dt:
 lv:
 	ocamlbuild -use-ocamlfind lv_analysis.byte
 
+vb:
+	ocamlbuild -use-ocamlfind vb_analysis.byte
+
 cfg:
 	ocamlbuild -use-ocamlfind cfg.byte
 
