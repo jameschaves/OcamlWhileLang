@@ -13,6 +13,9 @@ lv:
 vb:
 	ocamlbuild -use-ocamlfind vb_analysis.byte
 
+ae:
+	ocamlbuild -use-ocamlfind ae_analysis.byte
+
 cfg:
 	ocamlbuild -use-ocamlfind cfg.byte
 

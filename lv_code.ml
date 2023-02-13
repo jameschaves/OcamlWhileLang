@@ -72,8 +72,8 @@ let final_set dfg max_lab =
       | [] -> LabelSet.add lab finalset
       | _ -> finalset) LabelSet.empty (range (max_lab - 1));;
 
+(*Create a MAP (CIMap) witch the key is the labels and the content are a tulpe of IdentSet. See range in utils file. It return a list of labels, but starting on zero [0; 1; 2] *)
 module CIMap = Map.Make(struct type t = EBSet.key let compare = compare end);;
-
 let start_point max_lab = 
   List.fold_left (fun m n -> CIMap.add n (IdentSet.empty, IdentSet.empty) m) CIMap.empty (range (max_lab - 1));;
 
@@ -89,8 +89,8 @@ let lv_entry exit node =
 (*Exit - Is is the final block, empty. otherwise, includes a variable in the set of live variables ( at the exit from t') if it is live at the entry to any of the blocks
 that follow t'    *)
 let lv_exit final_set n cmap node =
-  if LabelSet.mem n final_set then 
-    IdentSet.empty
+  if LabelSet.mem n final_set then (*Is n (mem n) is in final_set*)
+    IdentSet.empty (*Return a empty set*)
   else 
     List.fold_left 
       (fun s l -> IdentSet.union s (fst (CIMap.find l cmap))) 
@@ -98,7 +98,7 @@ let lv_exit final_set n cmap node =
 
 let lv_iterate idfg final_set max_lab f cmap =
   let ncmap = List.fold_left (fun m n ->
-    let (entry, exit) = CIMap.find n m in
+    let (entry, exit) = CIMap.find n m in (*The entry and exit node set receive the tuple (IdentSet, IdentSet) referent the label from CIMap *)
     let node = EBSet.find n idfg in
     let nentry = lv_entry exit node in
     let nexit = lv_exit final_set n m node in
@@ -107,7 +107,7 @@ let lv_iterate idfg final_set max_lab f cmap =
     if (CIMap.equal ci_converged cmap ncmap) then ncmap
     else f ncmap;;
 
-let perform dfg max_lab =
-  let sp = start_point max_lab in
-  let fset = final_set dfg max_lab in
-  fix (lv_iterate dfg fset max_lab) sp;;
+let perform dfg max_lab = (*Receive the data flow graph of the program and the value of the max label*)
+  let sp = start_point max_lab in (*See the comments in start_point expression*)
+  let fset = final_set dfg max_lab in (*See the comments in final_set expression*)
+  fix (lv_iterate dfg fset max_lab) sp;; (*Execute lv_iterate until the fix point is achieved*)
