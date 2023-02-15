@@ -16,6 +16,9 @@ vb:
 ae:
 	ocamlbuild -use-ocamlfind ae_analysis.byte
 
+rd:
+	ocamlbuild -use-ocamlfind rd_analysis.byte
+
 cfg:
 	ocamlbuild -use-ocamlfind cfg.byte
 

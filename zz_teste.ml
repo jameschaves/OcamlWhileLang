@@ -37,8 +37,9 @@ let find_aexp_node node aExpset =
 let start_entry lab dfg =
   let node = EBSet.find lab dfg in
   find_aexp_node node AexprSet.empty;;
-
 let input_fname = "programs/ppa_pg48_teste_vbe.while";;
+
+let input_fname = "programs/ppa_pg43_teste_rd.while";;
 
 let input_file = open_in input_fname;;
 let lexer_buffer = Lexing.from_channel input_file;;
