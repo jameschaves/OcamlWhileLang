@@ -9,7 +9,7 @@ let print_label lab =
 
 
 let debug_rd rd_analysis max_lab = 
-    print_endline "LIVE VARIABLES ANALYSIS:";
+    print_endline "REACHING DEFINITION ANALYSIS:";
     List.iter (fun n ->
       let print_set_contents = 
         IdentLabelSet.iter (fun set -> print_string ("(" ^ fst (set) ^ ", " ^ print_label (snd (set)) ^ ")")) in
