@@ -1,37 +1,15 @@
 open OUnit2
-open Ast
-open Data_flow;;
-open Ae_code;;
-open Utils;;
+open Rd_test;;
 
-let input_fname_ae = "programs/ppa_pg42_teste_ae.while";;
 
-let teste_ae =
-  let input_file = open_in input_fname_ae in
-  let lexer_buffer = Lexing.from_channel input_file in
-  let ast = Parser.prog Lexer.read_token lexer_buffer in 
-  let (dfg, max_lab) = build_data_flow_graph ast in
-  let ae_analysis =  perform dfg max_lab  in
-    debug_ae ae_analysis max_lab;;
-    (* debug_dfg dfg max_lab;; *)
+let rd_analysis_result = "REACHING DEFINITION ANALYSIS: Entry (1): {(x, ?)(y, ?)} Exit (1): {(x, 1)(y, ?)} Entry (2): {(x, 1)(y, ?)} Exit (2): {(x, 1)(y, 2)} Entry (3): {(x, 1)(x, 5)(y, 2)(y, 4)} Exit (3): {(x, 1)(x, 5)(y, 2)(y, 4)} Entry (4): {(x, 1)(x, 5)(y, 2)(y, 4)} Exit (4): {(x, 1)(x, 5)(y, 4)} Entry (5): {(x, 1)(x, 5)(y, 4)} Exit (5): {(x, 5)(y, 4)} "
 
-let ae_analysy_result = "AVAILABLE EXPRESSIONS ANALYSIS:
-Entry (1):
-Exit (1): [a + b]
-Entry (2): [a + b]
-Exit (2): [a + b] [a * b]
-Entry (3): [a + b]
-Exit (3): [a + b]
-Entry (4): [a + b]
-Exit (4):
-Entry (5): Exit (5): [a + b]"
-
-let make_ae n i s = 
-  n >:: (fun _ -> assert_equal ae_analysy_result (teste_ae s))
+let make_rd n a s = 
+  n >:: (fun _ -> assert_equal a (teste_rd s))
  
 let tests = [
-  (* make_i "int" 22 "22"; 
-  make_i "add" 22 "11+11";
+  make_rd "RD Analysis: " rd_analysis_result "programs/ppa_pg43_teste_rd.while"; 
+  (*make_i "add" 22 "11+11";
   make_i "mult" 22 "2*11";
   make_i "multi of multi" 40 "2*2*10";
   make_i "mult on right of add" 22 "2+2*10";

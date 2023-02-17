@@ -119,6 +119,10 @@ In this project, we used the Ocamlbuild. The builds are set in the Makefile, wit
 		# If one wants to evaluate other file than the default
 				./rd_analysis.byte "full path of the new while language program"
 
+## Tests
+		# Execute tests
+				make tests
+
 ## Referências
 [1] NIELSON, Flemming; NIELSON, Hanne R.; HANKIN, Chris. Principles of program analysis. Springer, 2005.
 [2] Michael R. Clarkson et al. OCaml Programming: Correct + Efficient + Beautiful - 2013 - accessed Feb 2023 - https://cs3110.github.io/textbook

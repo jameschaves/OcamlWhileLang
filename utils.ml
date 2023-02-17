@@ -25,17 +25,6 @@ let repeat a n =
       repeat_ a (n-1) (a::acc)
   in repeat_ a n [];;
 
-let exp_has_variable expr x =
-  let rec compute expr =
-    match expr with
-    | Ident x -> true
-    | BinOp (_, a1, a2) -> let lh = compute a1 in compute a2
-    | RelOp (_, a1, a2) -> let lh = compute a1 in compute a2
-    | _ -> false
-  in compute expr;;
-
-
-
 let rec string_of_expr (e : expr) : string = 
   match e with
   | Int i -> string_of_int i
@@ -52,8 +41,9 @@ let rec string_of_expr (e : expr) : string =
     | Eq -> string_of_expr a1 ^ " == " ^ string_of_expr a2
     | Gt -> string_of_expr a1 ^ " > " ^ string_of_expr a2
     | Lt -> string_of_expr a1 ^ " - " ^ string_of_expr a2
+    | NotEq -> failwith "Error in type relOp"
   end
-  | (Neg  | Bool _ | Not _
+  | (Neg | Print _ | Not _
   | BoolOp (_, _, _) | Seq (_, _) | While (_, _) 
   | Assignment (_, _, Label _)| Skip (Label _) | Condition (_, Label _) 
   | IfThenElse (_, _, _)) -> failwith "14 precondition violated"

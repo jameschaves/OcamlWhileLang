@@ -23,7 +23,7 @@ cfg:
 	ocamlbuild -use-ocamlfind cfg.byte
 
 tests:
-	ocamlbuild -use-ocamlfind test.byte && ./test.byte
+	ocamlbuild -use-ocamlfind test_analysis.byte && ./test_analysis.byte
 
 clean:
 	ocamlbuild -clean
